@@ -137,9 +137,9 @@ jobs:
         run: |
           makim --verbose packaging.build_snap
 
-      - name: Package apk for ${{ matrix.arch }}
-        run: |
-          makim --verbose packaging.build_apk
+      # - name: Package apk for ${{ matrix.arch }}
+      #   run: |
+      #     makim --verbose packaging.build_apk
 
       - name: Package pacman for ${{ matrix.arch }}
         run: |
@@ -153,7 +153,7 @@ jobs:
             *.deb
             *.rpm
             *.snap
-            *.apk
+            # *.apk
             *.pkg.tar.xz
 
   package-release:
@@ -174,7 +174,8 @@ jobs:
       - name: Flatten directory structure
         run: |
           mkdir -p release_files
-          find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.apk" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
+          # find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.apk" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
+          find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
 
       - name: Create "any" and "noarch" packages
         run: |
@@ -184,7 +185,7 @@ jobs:
           # Find the correct files dynamically instead of hardcoding names
           AMDEB=$(find . -name "*amd64.deb" | head -1)
           AMRPM=$(find . -name "*x86_64.rpm" | head -1)
-          AMAPK=$(find . -name "*.apk" | head -1)
+          # AMAPK=$(find . -name "*.apk" | head -1)
           AMPKG=$(find . -name "*.pkg.tar.xz" | head -1)
           AMSNAP=$(find . -name "*.snap" | head -1)
 
@@ -201,11 +202,11 @@ jobs:
             echo "Warning: No x86_64 RPM package found"
           fi
 
-          if [ -n "$AMAPK" ]; then
-            cp "$AMAPK" "makim-${VERSION}-noarch.apk"
-          else
-            echo "Warning: No APK package found"
-          fi
+          # if [ -n "$AMAPK" ]; then
+          #   cp "$AMAPK" "makim-${VERSION}-noarch.apk"
+          # else
+          #   echo "Warning: No APK package found"
+          # fi
 
           if [ -n "$AMPKG" ]; then
             cp "$AMPKG" "makim-${VERSION}-noarch.pkg.tar.xz"
