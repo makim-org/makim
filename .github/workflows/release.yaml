@@ -6,9 +6,15 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+
+# Add permissions needed for creating releases
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   release:
@@ -61,3 +67,157 @@ jobs:
       - name: Setup tmate session
         if: "${{ failure() && (contains(github.event.pull_request.labels.*.name, 'ci:enable-debugging')) }}"
         uses: mxschmitt/action-tmate@v3
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            goarch: amd64
+            deb_arch: amd64
+            rpm_arch: x86_64
+          - arch: arm64
+            goarch: arm64
+            deb_arch: arm64
+            rpm_arch: aarch64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: conda/release.yaml
+          channels: conda-forge,nodefaults
+          activate-environment: makim
+          auto-update-conda: true
+          conda-solver: libmamba
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          poetry config virtualenvs.create false
+          poetry install
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+
+      - name: Install FPM
+        run: gem install fpm
+
+      - name: APT Install rpm and snap dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm snapd
+
+      - name: Make scripts executable
+        run: chmod +x scripts/postinstall.sh
+
+      - name: Package DEB for ${{ matrix.arch }}
+        run: |
+          makim --verbose packaging.build_deb
+
+      - name: Package RPM for ${{ matrix.arch }}
+        run: |
+          makim --verbose packaging.build_rpm
+
+      - name: Package Snap for ${{ matrix.arch }}
+        run: |
+          makim --verbose packaging.build_snap
+
+      - name: Package apk for ${{ matrix.arch }}
+        run: |
+          makim --verbose packaging.build_apk
+
+      - name: Package pacman for ${{ matrix.arch }}
+        run: |
+          makim --verbose packaging.build_pacman
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-${{ matrix.arch }}
+          path: |
+            *.deb
+            *.rpm
+            *.snap
+            *.apk
+            *.pkg.tar.xz
+
+  package-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: packages
+
+      - name: Display structure of downloaded files
+        run: ls -R packages
+
+      - name: Flatten directory structure
+        run: |
+          mkdir -p release_files
+          find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.apk" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
+
+      - name: Create "any" and "noarch" packages
+        run: |
+          # For demonstration, create copies of the amd64 packages for architecture-independent packages
+          cd release_files
+          ls -la
+          # Find the correct files dynamically instead of hardcoding names
+          AMDEB=$(find . -name "*amd64.deb" | head -1)
+          AMRPM=$(find . -name "*x86_64.rpm" | head -1)
+          AMAPK=$(find . -name "*.apk" | head -1)
+          AMPKG=$(find . -name "*.pkg.tar.xz" | head -1)
+          AMSNAP=$(find . -name "*.snap" | head -1)
+
+
+          if [ -n "$AMDEB" ]; then
+            cp "$AMDEB" "agent_${VERSION}_any.deb"
+          else
+            echo "Warning: No amd64 DEB package found"
+          fi
+
+          if [ -n "$AMRPM" ]; then
+            cp "$AMRPM" "agent-${VERSION}-1.noarch.rpm"
+          else
+            echo "Warning: No x86_64 RPM package found"
+          fi
+
+          if [ -n "$AMAPK" ]; then
+            cp "$AMAPK" "agent-${VERSION}-noarch.apk"
+          else
+            echo "Warning: No APK package found"
+          fi
+
+          if [ -n "$AMPKG" ]; then
+            cp "$AMPKG" "agent-${VERSION}-noarch.pkg.tar.xz"
+          else
+            echo "Warning: No pacman package found"
+          fi
+
+          if [ -n "$AMSNAP" ]; then
+            cp "$AMSNAP" "agent_${VERSION}_any.snap"
+          else
+            echo "Warning: No snap package found"
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release_files/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

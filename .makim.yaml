@@ -626,3 +626,31 @@ groups:
           # it requires the password manually
           ssh-keygen -R "[localhost]:2222" || true
           ssh -o StrictHostKeyChecking=no testuser@localhost -p 2222 'pwd'
+
+  packaging:
+    help: Tasks for packaging via fpm
+    tasks:
+      build_deb:
+        help: Build a deb package
+        dir: .
+        run: bash ./packaging/scripts/deb.sh
+      build_binary:
+        help: Build a binary package
+        dir: .
+        run: poetry build && pyinstaller --onefile -n makim-linux-x86-64 --add-data 'src/makim/schema.json:.' src/makim/__main__.py
+      build_rpm:
+        help: Build a rpm package
+        dir: .
+        run: bash ./packaging/scripts/rpm.sh
+      build_apk:
+        help: Build a apk package
+        dir: .
+        run: bash ./packaging/scripts/apk.sh
+      build_snap:
+        help: Build a snap package
+        dir: .
+        run: bash ./packaging/scripts/snap.sh
+      build_pacman:
+        help: Build a pacman package
+        dir: .
+        run: bash ./packaging/scripts/pacman.sh

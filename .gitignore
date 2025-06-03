@@ -130,3 +130,7 @@ dmypy.json
 
 # log tests files
 tests/smoke/logs
+
+# Ignore fpm packaged files
+makim_*
+makim-*

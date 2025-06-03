@@ -1,0 +1,11 @@
+[unit]
+Description=
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/makim
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
