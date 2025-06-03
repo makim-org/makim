@@ -184,31 +184,31 @@ jobs:
 
 
           if [ -n "$AMDEB" ]; then
-            cp "$AMDEB" "agent_${VERSION}_any.deb"
+            cp "$AMDEB" "makim_${VERSION}_any.deb"
           else
             echo "Warning: No amd64 DEB package found"
           fi
 
           if [ -n "$AMRPM" ]; then
-            cp "$AMRPM" "agent-${VERSION}-1.noarch.rpm"
+            cp "$AMRPM" "makim-${VERSION}-1.noarch.rpm"
           else
             echo "Warning: No x86_64 RPM package found"
           fi
 
           if [ -n "$AMAPK" ]; then
-            cp "$AMAPK" "agent-${VERSION}-noarch.apk"
+            cp "$AMAPK" "makim-${VERSION}-noarch.apk"
           else
             echo "Warning: No APK package found"
           fi
 
           if [ -n "$AMPKG" ]; then
-            cp "$AMPKG" "agent-${VERSION}-noarch.pkg.tar.xz"
+            cp "$AMPKG" "makim-${VERSION}-noarch.pkg.tar.xz"
           else
             echo "Warning: No pacman package found"
           fi
 
           if [ -n "$AMSNAP" ]; then
-            cp "$AMSNAP" "agent_${VERSION}_any.snap"
+            cp "$AMSNAP" "makim_${VERSION}_any.snap"
           else
             echo "Warning: No snap package found"
           fi

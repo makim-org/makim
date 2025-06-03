@@ -1,5 +1,5 @@
 [unit]
-Description=
+Description=A tool that helps organize and simplify helper commands using YAML configuration
 After=network.target
 
 [Service]
