@@ -82,6 +82,11 @@ jobs:
             goarch: arm64
             deb_arch: arm64
             rpm_arch: aarch64
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -99,9 +104,6 @@ jobs:
         run: |
           poetry config virtualenvs.create false
           poetry install
-
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
