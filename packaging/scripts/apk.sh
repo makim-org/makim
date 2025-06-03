@@ -54,7 +54,6 @@ fpm -s dir -t apk -n makim -v $VERSION \
  --depends "apk" \
  --after-install packaging/scripts/postinstall.sh \
  --deb-pre-depends "apk" \
- --allow-untrusted \ # fpm suggests this option for apk packages
  $MAKIM_BIN=/usr/local/bin/makim \
  ./packaging/makim.service=/lib/systemd/system/makim.service \
  ./packaging/dependencies.txt=/usr/share/agent/dependencies.txt
