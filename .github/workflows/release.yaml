@@ -232,49 +232,6 @@ jobs:
           # find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.apk" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
           find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
 
-      - name: Create "any" and "noarch" packages
-        run: |
-          # For demonstration, create copies of the amd64 packages for architecture-independent packages
-          cd release_files
-          ls -la
-          # Find the correct files dynamically instead of hardcoding names
-          AMDEB=$(find . -name "*amd64.deb" | head -1)
-          AMRPM=$(find . -name "*x86_64.rpm" | head -1)
-          # AMAPK=$(find . -name "*.apk" | head -1)
-          AMPKG=$(find . -name "*.pkg.tar.xz" | head -1)
-          AMSNAP=$(find . -name "*.snap" | head -1)
-
-
-          if [ -n "$AMDEB" ]; then
-            cp "$AMDEB" "makim_${VERSION}_any.deb"
-          else
-            echo "Warning: No amd64 DEB package found"
-          fi
-
-          if [ -n "$AMRPM" ]; then
-            cp "$AMRPM" "makim-${VERSION}-1.noarch.rpm"
-          else
-            echo "Warning: No x86_64 RPM package found"
-          fi
-
-          # if [ -n "$AMAPK" ]; then
-          #   cp "$AMAPK" "makim-${VERSION}-noarch.apk"
-          # else
-          #   echo "Warning: No APK package found"
-          # fi
-
-          if [ -n "$AMPKG" ]; then
-            cp "$AMPKG" "makim-${VERSION}-noarch.pkg.tar.xz"
-          else
-            echo "Warning: No pacman package found"
-          fi
-
-          if [ -n "$AMSNAP" ]; then
-            cp "$AMSNAP" "makim_${VERSION}_any.snap"
-          else
-            echo "Warning: No snap package found"
-          fi
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
