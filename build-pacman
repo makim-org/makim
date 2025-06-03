@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+
+# Create and use a virtual environment with venv instead of conda
+VENV_DIR="$(pwd)/.venv"
+
+# Create venv if it doesn't exist
+if [ ! -d "$VENV_DIR" ]; then
+    echo "Creating Python virtual environment..."
+    python -m venv "$VENV_DIR"
+fi
+
+# Activate the virtual environment
+source "$VENV_DIR/bin/activate"
+
+# Install required packages
+echo "Installing dependencies..."
+pip install --upgrade pip
+pip install poetry
+
+# Run poetry commands inside the venv
+poetry config virtualenvs.create false
+poetry install
+
+# Build commands
+echo "Building package..."
+# ...existing code...
+
+# Deactivate venv when done
+deactivate
+
+echo "Build completed successfully"
