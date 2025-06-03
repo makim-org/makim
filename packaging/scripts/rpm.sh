@@ -58,4 +58,4 @@ fpm -s dir -t rpm -n makim -v $VERSION \
  --rpm-compression "xz" \
  $MAKIM_BIN=/usr/local/bin/makim \
  ./packaging/makim.service=/lib/systemd/system/makim.service \
- ./packaging/dependencies.txt=/usr/share/agent/dependencies.txt
+ ./packaging/dependencies.txt=/usr/share/makim/dependencies.txt

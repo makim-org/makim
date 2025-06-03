@@ -57,4 +57,4 @@ fpm -s dir -t deb -n makim -v $VERSION \
  --deb-pre-depends "apt" \
  $MAKIM_BIN=/usr/local/bin/makim \
  ./packaging/makim.service=/lib/systemd/system/makim.service \
- ./packaging/dependencies.txt=/usr/share/agent/dependencies.txt
+ ./packaging/dependencies.txt=/usr/share/makim/dependencies.txt
