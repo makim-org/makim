@@ -113,18 +113,11 @@ jobs:
       - name: Install FPM
         run: gem install fpm
 
-      - name: APT Install rpm, pacman and snap dependencies
+      - name: APT Install rpm and snap dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y software-properties-common
-          # Check if bsdtar is available in the default repositories
-          if ! apt-cache show bsdtar > /dev/null 2>&1; then
-            echo "Adding required repositories for bsdtar"
-            sudo add-apt-repository universe
-            sudo apt-get update
-          fi
-          # Install dependencies
-          sudo apt-get install -y rpm snapd bsdtar
+          sudo apt-get install -y rpm snapd
 
       - name: Make scripts executable
         run: chmod +x packaging/scripts/postinstall.sh
@@ -145,15 +138,7 @@ jobs:
         run: |
           makim --verbose packaging.build_snap
 
-      # - name: Package apk for ${{ matrix.arch }}
-      #   run: |
-      #     makim --verbose packaging.build_apk
-
-      - name: Package pacman for ${{ matrix.arch }}
-        run: |
-          makim --verbose packaging.build_pacman
-
-      - name: Upload artifacts
+      - name: Upload artifacts (non-pacman)
         uses: actions/upload-artifact@v4
         with:
           name: packages-${{ matrix.arch }}
@@ -162,10 +147,49 @@ jobs:
             *.rpm
             *.snap
             # *.apk
+
+  build-pacman:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+
+    steps:
+      - name: Install base dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git python python-pip base-devel
+
+      - uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+          poetry install
+
+      - name: Make scripts executable
+        run: chmod +x packaging/scripts/postinstall.sh
+
+      - name: build python standalone binary
+        run: |
+          makim --verbose packaging.build_binary
+
+      - name: Package pacman for ${{ matrix.arch }}
+        run: |
+          makim --verbose packaging.build_pacman
+
+      - name: Upload pacman artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pacman-packages-${{ matrix.arch }}
+          path: |
             *.pkg.tar.xz
 
   package-release:
-    needs: build
+    needs: [build, build-pacman]
     runs-on: ubuntu-latest
     steps:
       - name: Get the version
