@@ -112,8 +112,6 @@ jobs:
 
       - name: Install FPM
         run: |
-          export GEM_HOME="${HOME}/.local/share/gem"
-          export PATH="${GEM_HOME}/ruby/3.4.0/bin:$PATH"
           gem install fpm
           # Verify fpm is accessible
           which fpm
