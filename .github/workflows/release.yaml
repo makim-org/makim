@@ -113,12 +113,6 @@ jobs:
       - name: Install FPM
         run: |
           gem install fpm
-          export GEM_HOME="${HOME}/.local/share/gem"
-          export PATH="${GEM_HOME}/ruby/3.4.0/bin:$PATH"
-          # Verify fpm is accessible
-          which fpm
-          # Add PATH to GITHUB_ENV to persist across steps
-          echo "PATH=${PATH}" >> $GITHUB_ENV
 
       - name: Verify FPM Installation
         run: |
@@ -171,7 +165,7 @@ jobs:
       - name: Install base dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git python python-pip python-poetry base-devel ruby
+          pacman -S --noconfirm git python python-pip python-poetry base-devel ruby ruby-erb
 
       - name: Install FPM
         run: |
