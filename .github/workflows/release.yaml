@@ -95,7 +95,7 @@ jobs:
           conda-solver: libmamba
           python-version: "3.11"
 
-      - name: Install deps
+      - name: Install dependencies using Poetry
         run: |
           poetry config virtualenvs.create false
           poetry install
