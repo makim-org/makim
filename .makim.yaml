@@ -654,3 +654,7 @@ groups:
         help: Build a pacman package
         dir: .
         run: bash ./packaging/scripts/pacman.sh
+      set_env:
+        help: Set pypi package to current environment variable
+        dir: .
+        run: VERSION=$(awk -F'"' '/version = /{print $2}' ./pyproject.toml | head -1)

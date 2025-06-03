@@ -119,6 +119,10 @@ jobs:
       - name: Make scripts executable
         run: chmod +x scripts/postinstall.sh
 
+      - name: build python standalone binary
+        run: |
+          makim --verbose build_binary
+
       - name: Package DEB for ${{ matrix.arch }}
         run: |
           makim --verbose packaging.build_deb
