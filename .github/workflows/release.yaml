@@ -167,7 +167,6 @@ jobs:
       - name: Set up Python venv
         run: |
           python -m venv /venv
-          echo 'source /venv/bin/activate' >> $GITHUB_ENV
           source /venv/bin/activate
           pip install --upgrade pip
 
