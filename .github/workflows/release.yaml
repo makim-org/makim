@@ -164,18 +164,16 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          miniforge-version: latest
-          environment-file: conda/release.yaml
-          channels: conda-forge,nodefaults
-          activate-environment: makim
-          auto-update-conda: true
-          conda-solver: libmamba
-          python-version: "3.11"
+      - name: Set up Python venv
+        run: |
+          python -m venv /venv
+          echo 'source /venv/bin/activate' >> $GITHUB_ENV
+          source /venv/bin/activate
+          pip install --upgrade pip
 
       - name: Install dependencies using Poetry
         run: |
+          source /venv/bin/activate
           poetry config virtualenvs.create false
           poetry install
 
