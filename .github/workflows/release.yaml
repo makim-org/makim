@@ -160,7 +160,11 @@ jobs:
       - name: Install base dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git python python-pip python-poetry base-devel
+          pacman -S --noconfirm git python python-pip python-poetry base-devel ruby
+
+      - name: Install FPM
+        run: |
+          gem install fpm
 
       - uses: actions/checkout@v4
 
