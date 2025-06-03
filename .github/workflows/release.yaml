@@ -113,9 +113,17 @@ jobs:
       - name: Install FPM
         run: gem install fpm
 
-      - name: APT Install rpm , pacman and snap dependencies
+      - name: APT Install rpm, pacman and snap dependencies
         run: |
           sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          # Check if bsdtar is available in the default repositories
+          if ! apt-cache show bsdtar > /dev/null 2>&1; then
+            echo "Adding required repositories for bsdtar"
+            sudo add-apt-repository universe
+            sudo apt-get update
+          fi
+          # Install dependencies
           sudo apt-get install -y rpm snapd bsdtar
 
       - name: Make scripts executable
