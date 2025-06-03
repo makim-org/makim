@@ -160,13 +160,22 @@ jobs:
       - name: Install base dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git python python-pip base-devel
+          pacman -S --noconfirm git python python-pip python-poetry base-devel
 
       - uses: actions/checkout@v4
 
-      - name: Install Python dependencies
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          environment-file: conda/release.yaml
+          channels: conda-forge,nodefaults
+          activate-environment: makim
+          auto-update-conda: true
+          conda-solver: libmamba
+          python-version: "3.11"
+
+      - name: Install dependencies using Poetry
         run: |
-          pip install poetry
           poetry config virtualenvs.create false
           poetry install
 
@@ -175,10 +184,12 @@ jobs:
 
       - name: build python standalone binary
         run: |
+          source /venv/bin/activate
           makim --verbose packaging.build_binary
 
       - name: Package pacman for ${{ matrix.arch }}
         run: |
+          source /venv/bin/activate
           makim --verbose packaging.build_pacman
 
       - name: Upload pacman artifacts
