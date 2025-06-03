@@ -113,8 +113,12 @@ jobs:
       - name: Install FPM
         run: |
           gem install fpm
+          export GEM_HOME="${HOME}/.local/share/gem"
+          export PATH="${GEM_HOME}/ruby/3.4.0/bin:$PATH"
           # Verify fpm is accessible
           which fpm
+          # Add PATH to GITHUB_ENV to persist across steps
+          echo "PATH=${PATH}" >> $GITHUB_ENV
 
       - name: APT Install rpm and snap dependencies
         run: |
