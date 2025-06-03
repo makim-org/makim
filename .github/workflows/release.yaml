@@ -120,6 +120,10 @@ jobs:
           # Add PATH to GITHUB_ENV to persist across steps
           echo "PATH=${PATH}" >> $GITHUB_ENV
 
+      - name: Verify FPM Installation
+        run: |
+          fpm --version || echo "Error: FPM installation failed"
+
       - name: APT Install rpm and snap dependencies
         run: |
           sudo apt-get update
@@ -175,9 +179,8 @@ jobs:
           export GEM_HOME="${HOME}/.local/share/gem"
           export PATH="${GEM_HOME}/ruby/3.4.0/bin:$PATH"
           # Make sure fpm is in PATH
-          which fpm
-          # Add PATH to GITHUB_ENV to persist across steps
           echo "PATH=${PATH}" >> $GITHUB_ENV
+          which fpm
 
       - uses: actions/checkout@v4
 
@@ -186,6 +189,7 @@ jobs:
           python -m venv /venv
           source /venv/bin/activate
           pip install --upgrade pip
+          pip install pyinstaller rapidfuzz
 
       - name: Install dependencies using Poetry
         run: |
