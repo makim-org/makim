@@ -113,10 +113,10 @@ jobs:
       - name: Install FPM
         run: gem install fpm
 
-      - name: APT Install rpm and snap dependencies
+      - name: APT Install rpm , pacman and snap dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y rpm snapd
+          sudo apt-get install -y rpm snapd bsdtar
 
       - name: Make scripts executable
         run: chmod +x packaging/scripts/postinstall.sh
