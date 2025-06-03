@@ -88,7 +88,7 @@ jobs:
       - name: Run smoke tests using makim and containers-sugar
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
-          pip install "containers-sugar>=1.16.1"
+          pip install "containers-sugar>=1.17.0"
           makim smoke-tests.containers
 
       - name: Run smoke tests using different interpreters
