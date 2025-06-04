@@ -9,7 +9,7 @@ groups:
           pwd
           sugar compose pull --all || (echo "Error pulling images"; exit 1)
           sugar compose build --all || (echo "Error building images"; exit 1)
-          sugar compose-ext restart --all --options "-d"
+          sugar compose-ext restart --all --options "-d" || (echo "Error restarting containers"; exit 1)
       run:
         help: test running a docker service using containers-sugar
         hooks:
