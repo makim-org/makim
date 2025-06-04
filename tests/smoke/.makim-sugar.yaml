@@ -5,9 +5,10 @@ groups:
       setup:
         help: build necessary docker image
         run: |
+          set -e
           pwd
           sugar compose pull --all || (echo "Error pulling images"; exit 1)
-          sugar compose build --all
+          sugar compose build --all || (echo "Error building images"; exit 1)
           sugar compose-ext restart --all --options "-d"
       run:
         help: test running a docker service using containers-sugar
