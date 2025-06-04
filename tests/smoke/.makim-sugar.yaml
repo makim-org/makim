@@ -6,7 +6,7 @@ groups:
         help: build necessary docker image
         run: |
           pwd
-          sugar compose pull --all
+          sugar compose pull --all || (echo "Error pulling images"; exit 1)
           sugar compose build --all
           sugar compose-ext restart --all --options "-d"
       run:
