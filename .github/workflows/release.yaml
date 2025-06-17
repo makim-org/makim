@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     tags:
-      - '*.*.*'
+      - "*.*.*"
   pull_request:
     branches: [main]
 
@@ -214,32 +214,62 @@ jobs:
             *.pkg.tar.xz
 
   package-release:
-    needs: [build, build-pacman]
+    needs: [release, build, build-pacman]
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
-      - name: Get the version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from pyproject.toml
+        id: get-version
+        run: |
+          VERSION=$(awk -F'"' '/version = /{print $2}' ./pyproject.toml | head -1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Project version: $VERSION"
+
+      - name: Get the latest release tag
+        id: get-tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $TAG"
+
+      - name: Check if tag matches version
+        id: check-version
+        run: |
+          if [ "${{ steps.get-tag.outputs.tag }}" = "${{ steps.get-version.outputs.version }}" ]; then
+            echo "match=true" >> $GITHUB_OUTPUT
+            echo "Tag matches version - proceeding with release"
+          else
+            echo "match=false" >> $GITHUB_OUTPUT
+            echo "Tag (${{ steps.get-tag.outputs.tag }}) does not match version (${{ steps.get-version.outputs.version }}) - skipping release"
+            exit 0
+          fi
 
       - name: Download all artifacts
+        if: steps.check-version.outputs.match == 'true'
         uses: actions/download-artifact@v4
         with:
           path: packages
 
       - name: Display structure of downloaded files
+        if: steps.check-version.outputs.match == 'true'
         run: ls -R packages
 
       - name: Flatten directory structure
+        if: steps.check-version.outputs.match == 'true'
         run: |
           mkdir -p release_files
-          # find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.apk" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
           find packages -type f -name "*.deb" -o -name "*.rpm" -o -name "*.snap" -o -name "*.pkg.tar.xz" | xargs -I {} cp {} release_files/
 
-      - name: Create Release
+      - name: Upload artifacts to existing release
+        if: steps.check-version.outputs.match == 'true'
         uses: softprops/action-gh-release@v1
-        if: ${{ github.ref_type == 'tag' }}
         with:
+          tag_name: ${{ steps.get-tag.outputs.tag }}
           files: release_files/*
-          draft: false
-          prerelease: false
+          append_body: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 [project]
 name = "makim"
-version = "1.26.2"  # semantic-release
+version = "1.26.3"  # semantic-release
 description = "A tool that helps organize and simplify helper commands using YAML configuration"
 authors = [
   {name = "Ivan Ogasawara", email = "ivan.ogasawara@gmail.com"}
