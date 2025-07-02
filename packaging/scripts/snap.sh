@@ -2,6 +2,7 @@
 
 # Dynamically fetch the version from pyproject.toml
 VERSION=$1
+ARCHITECTURE=$2
 MAKIM_BIN=$(ls ./dist/makim-linux-*)
 
 echo "Building Debian package for Makim version: $VERSION"
@@ -48,7 +49,7 @@ fi
 
 # Create the snap package
 fpm -s dir -t snap -n makim -v $VERSION \
- --architecture amd64 \
+ --architecture $ARCHITECTURE \
  --description "Makim" \
  --maintainer "Ivan Ogaswara <ivan.ogasawara@gmail.com>" \
  --depends "snap" \

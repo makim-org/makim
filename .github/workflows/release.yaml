@@ -145,15 +145,14 @@ jobs:
 
       - name: Package DEB for ${{ matrix.arch }}
         run: |
-          makim --verbose packaging.build_deb --version ${{ needs.release.outputs.version }}
-
+          makim --verbose packaging.build_deb --version ${{ needs.release.outputs.version }} --architecture ${{ matrix.arch }}
       - name: Package RPM for ${{ matrix.arch }}
         run: |
-          makim --verbose packaging.build_rpm --version ${{ needs.release.outputs.version }}
+          makim --verbose packaging.build_rpm --version ${{ needs.release.outputs.version }} --architecture ${{ matrix.arch }}
 
       - name: Package Snap for ${{ matrix.arch }}
         run: |
-          makim --verbose packaging.build_snap --version ${{ needs.release.outputs.version }}
+          makim --verbose packaging.build_snap --version ${{ needs.release.outputs.version }} --architecture ${{ matrix.arch }}
 
       - name: Upload artifacts (non-pacman)
         uses: actions/upload-artifact@v4
@@ -215,7 +214,7 @@ jobs:
       - name: Package pacman for ${{ matrix.arch }}
         run: |
           source /venv/bin/activate
-          makim --verbose packaging.build_pacman --version ${{ needs.release.outputs.version }}
+          makim --verbose packaging.build_pacman --version ${{ needs.release.outputs.version }} --architecture ${{ matrix.arch }}
 
       - name: Upload pacman artifacts
         uses: actions/upload-artifact@v4

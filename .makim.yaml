@@ -642,9 +642,13 @@ groups:
             help: Set the version of the package
             type: string
             default: "1.0.0"
+          architecture:
+            help: Set the architecture of the package
+            type: string
+            default: "amd64"
         dir: .
         run: |
-          bash ./packaging/scripts/deb.sh ${{ args.version }}
+          bash ./packaging/scripts/deb.sh ${{ args.version }} ${{ args.architecture }}
 
       build_binary:
         help: Build a binary package
@@ -658,9 +662,13 @@ groups:
             help: Set the version of the package
             type: string
             default: "1.0.0"
+          architecture:
+            help: Set the architecture of the package
+            type: string
+            default: "amd64"
         dir: .
         run: |
-          bash ./packaging/scripts/rpm.sh ${{ args.version }}
+          bash ./packaging/scripts/rpm.sh ${{ args.version }} ${{ args.architecture }}
 
       build_apk:
         help: Build a apk package
@@ -669,9 +677,13 @@ groups:
             help: Set the version of the package
             type: string
             default: "1.0.0"
+          architecture:
+            help: Set the architecture of the package
+            type: string
+            default: "amd64"
         dir: .
         run: |
-          bash ./packaging/scripts/apk.sh ${{ args.version }}
+          bash ./packaging/scripts/apk.sh ${{ args.version }} ${{ args.architecture }}
 
       build_snap:
         help: Build a snap package
@@ -680,9 +692,13 @@ groups:
             help: Set the version of the package
             type: string
             default: "1.0.0"
+          architecture:
+            help: Set the architecture of the package
+            type: string
+            default: "amd64"
         dir: .
         run: |
-          bash ./packaging/scripts/snap.sh  ${{ args.version }}
+          bash ./packaging/scripts/snap.sh  ${{ args.version }} ${{ args.architecture }}
 
       build_pacman:
         help: Build a pacman package
@@ -691,9 +707,13 @@ groups:
             help: Set the version of the package
             type: string
             default: "1.0.0"
+          architecture:
+            help: Set the architecture of the package
+            type: string
+            default: "amd64"
         dir: .
         run: |
-          bash ./packaging/scripts/pacman.sh  ${{ args.version }}
+          bash ./packaging/scripts/pacman.sh  ${{ args.version }} ${{ args.architecture }}
 
       set_env:
         help: Set pypi package to current environment variable
