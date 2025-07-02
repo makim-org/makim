@@ -68,6 +68,7 @@ nox = ">=2024.3.2"
 nbconvert = ">=7.16.3"
 pymdown-extensions = ">=10.7.1"
 pyinstaller = {version = ">=6.12.0", python = "<3.14"}
+containers-sugar = { version = ">=1.17.0", platform = "linux" }
 
 
 [tool.pytest.ini_options]
