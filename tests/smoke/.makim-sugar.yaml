@@ -1,4 +1,5 @@
 env-file: .env
+backend: bash
 groups:
   containers:
     tasks:
@@ -15,7 +16,6 @@ groups:
         hooks:
           pre-run:
             - task: containers.setup
-        backend: bash
         run: |
           sugar compose exec --service service1 --options "-T" --cmd "python -c 'print(1)'"
           sugar compose stop --all
