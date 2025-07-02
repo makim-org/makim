@@ -2,7 +2,7 @@
 
 __author__ = 'Ivan Ogasawara'
 __email__ = 'ivan.ogasawara@gmail.com'
-__version__ = '1.26.3'  # semantic-release
+__version__ = '1.27.0'  # semantic-release
 
 
 from makim.core import Makim  # noqa: F401

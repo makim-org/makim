@@ -1,6 +1,13 @@
 # Release Notes
 ---
 
+# [1.27.0](https://github.com/makim-org/makim/compare/1.26.3...1.27.0) (2025-07-02)
+
+
+### Features
+
+* add architecture parameter to packaging scripts for better flexibility ([#201](https://github.com/makim-org/makim/issues/201)) ([bacf6a8](https://github.com/makim-org/makim/commit/bacf6a89e09ea964385c1d8469783d9cabd6a603))
+
 ## [1.26.3](https://github.com/makim-org/makim/compare/1.26.2...1.26.3) (2025-06-25)
 
 
