@@ -836,7 +836,7 @@ class Makim:
             is_store_true = action == 'store_true'
             default = v.get('default', False if is_store_true else None)
 
-            args_input[k_clean] = default
+            args_input[k_clean] = cast(Union[str, bool, float, int], default)
 
             input_flag = f'--{k}'
             if args.get(input_flag) is not None:
