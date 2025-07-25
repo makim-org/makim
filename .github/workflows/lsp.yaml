@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "src/makim/schema.json"
+  pull_request:
+    branches: [main]
 
 jobs:
   sync-schema:
@@ -23,8 +25,12 @@ jobs:
           git clone https://github.com/makim-org/makim-lsp.git
           cd makim-lsp
           git checkout -b sync-schema-$(date +%s)
+          cp ../src/makim/schema.json ./packages/language-server/src/schema/makim.schema.json
 
-          cp ./src/makim/schema.json ./packages/language-server/src/schema/makim.schema.json
+      - name: Push LSP branch and open a PR
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          cd makim-lsp
 
           git add .
           git commit -m "chore(schema): sync from Makim"
