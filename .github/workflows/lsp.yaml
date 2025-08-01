@@ -8,6 +8,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
 jobs:
   sync-schema:
     runs-on: ubuntu-latest
@@ -22,11 +25,7 @@ jobs:
 
       - name: GitHub Login
         if: ${{ github.event_name == 'push' }}
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          : "${GH_TOKEN:?GH_TOKEN is empty or not set}"
-          echo "$GH_TOKEN" | gh auth login --with-token
           gh auth setup-git
 
       - name: Clone target repo
