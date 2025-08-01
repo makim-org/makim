@@ -35,7 +35,7 @@ jobs:
       - name: Clone LSP repo
         if: ${{ github.event_name == 'push' }}
         run: |
-          gh repo clone makim-org/makim-lsp
+          gh repo clone https://oauth2:${{ secrets.GH_TOKEN }}@github.com/makim-org/makim-lsp.git
 
       - name: Create a new branch
         run: |
