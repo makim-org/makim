@@ -38,7 +38,9 @@ jobs:
           poetry install
 
       - name: Generate documentation with changes from semantic-release
-        run: makim --verbose docs.build
+        run: |
+          makim --verbose docs.build
+          echo "docs.makim.org" > ./build/CNAME
 
       - name: GitHub Pages action
         if: ${{ github.event_name == 'workflow_dispatch' }}
