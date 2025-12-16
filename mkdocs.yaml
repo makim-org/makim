@@ -1,6 +1,6 @@
 site_name: Makim
-site_url: https://osl-incubator.github.io/makim
-repo_url: https://github.com/osl-incubator/makim.git
+site_url: https://makim-org.github.io/makim
+repo_url: https://github.com/makim-org/makim
 docs_dir: ./docs
 site_dir: ./build
 # extra_css:
@@ -140,11 +140,11 @@ extra:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/opensciencelabs
     - icon: fontawesome/brands/github
-      link: https://github.com/osl-incubator/makim.git
+      link: https://github.com/makim-org/makim
   support_levels:
     supported:
       icon: :material-check-decagram:{ .verified }
-      description: Tested in CI. If this doesn't work for you, please [file an issue](https://github.com/osl-incubator/makim.git/issues/new).
+      description: Tested in CI. If this doesn't work for you, please [file an issue](https://github.com/makim-org/makim/issues/new).
     bug:
       icon: :material-bug:{ .bug }
       description: Should work but doesn't because upstream is broken. Supported on a best-effort basis.
