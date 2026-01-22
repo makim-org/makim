@@ -197,21 +197,6 @@ jobs:
           pip install --upgrade pip
           pip install pyinstaller rapidfuzz
 
-      - name: Patch PyInstaller conda hook for missing depends
-        run: |
-          source /venv/bin/activate
-          python - <<'PY'
-          import pathlib
-          import PyInstaller.utils.hooks.conda as conda_hook
-
-          path = pathlib.Path(conda_hook.__file__)
-          text = path.read_text()
-          target = 'for dependency in self.raw["depends"]:'
-          replacement = 'for dependency in self.raw.get("depends", []):'
-          if target in text:
-              path.write_text(text.replace(target, replacement))
-          PY
-
       - name: Install dependencies using Poetry
         run: |
           source /venv/bin/activate
