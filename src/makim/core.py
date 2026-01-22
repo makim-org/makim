@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, TextIO, TypedDict, Union, cast
 
 import dotenv
 import paramiko
-import yaml  # type: ignore
+import yaml
 
 from jinja2 import Environment
 from jsonschema import ValidationError, validate
@@ -239,7 +239,7 @@ class Makim:
     ) -> None:
         try:
             # Render the host configuration values
-            env, variables = self._load_scoped_data('task')
+            env, _ = self._load_scoped_data('task')
             rendered_config = self._render_host_config(host_config, env)
 
             ssh = paramiko.SSHClient()
@@ -252,9 +252,7 @@ class Makim:
                 port=rendered_config['port'],
             )
 
-            stdin, stdout, stderr = ssh.exec_command(
-                cmd, environment=os.environ
-            )
+            _, stdout, stderr = ssh.exec_command(cmd, environment=os.environ)
 
             if self.verbose:
                 MakimLogs.print_info(cmd)
