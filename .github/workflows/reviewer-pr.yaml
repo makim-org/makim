@@ -1,0 +1,50 @@
+# .github/workflows/review-pr.yml
+name: Review PR with ChatGPT (secure)
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+
+      - name: Review PR
+        uses: osl-incubator/github-actions-chatgpt-pr-reviewer@1.1.0
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          openai_model: gpt-5
+          openai_temperature: "0.0"
+          openai_max_tokens: "128000"
+          openai_max_completion_tokens: "128000"
+          prompt_project_introduction: >
+            Makim is inspired by tools like Make and Ansible, focusing on
+            improving task definition and dependency management. Instead of
+            using the Makefile format, it utilizes YAML for defining tasks.
+          prompt_extra_criteria: >
+            verify SOLID principle violations;
+            just add comments about key topics, mainly focused on bugs;
+          github_token: ${{ github.token }}
+          github_pr_id: ${{ github.event.pull_request.number }}
+          exclude_path: |
+            **/*.{png,jpg,jpeg,webp,avif,gif,tif,tiff,ico,bmp,svg,pdf,flac,ogg,wav,mp3,mp4,mov}
+            **/*.{zip,tar,tar.gz,gz,7z,rar,bin,exe,wasm,woff,woff2,ttf,otf,heic,heif}
+            **/*.{pkl,sqlite,sqlite3,db}
+            **/*.{lock,lockb}
+            package-lock.json, yarn.lock, pnpm-lock.yaml, Pipfile.lock, Cargo.lock, Gemfile.lock
+            **/*.ipynb
+        env:
+          OPENAI_MAX_COMPLETION_TOKENS: "128000"
+          OPENAI_MAX_INPUT_TOKENS: "400000"
+          OPENAI_REASONING: "on"
+          LOG_LEVEL: "DEBUG"
