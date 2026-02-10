@@ -192,7 +192,7 @@ class Makim:
         out_stream: TextIO = sys.stdout,
         err_stream: TextIO = sys.stderr,
         exit_on_error: bool = True,
-    ) -> None:
+    ) -> bool:
         self._load_shell_app()
 
         fd, filepath = tempfile.mkstemp(suffix=self.tmp_suffix, text=True)
@@ -224,6 +224,7 @@ class Makim:
                 e.exit_code or 1,
                 exit_on_error=exit_on_error,
             )
+            return False
         except KeyboardInterrupt:
             os.close(fd)
             pid = p.pid
@@ -233,10 +234,11 @@ class Makim:
                 MakimError.SH_KEYBOARD_INTERRUPT,
             )
         os.close(fd)
+        return True
 
     def _call_shell_remote(
         self, cmd: str, host_config: dict[str, Any], exit_on_error: bool = True
-    ) -> None:
+    ) -> bool:
         try:
             # Render the host configuration values
             env, _ = self._load_scoped_data('task')
@@ -266,25 +268,30 @@ class Makim:
                     MakimError.SSH_EXECUTION_ERROR,
                     exit_on_error=exit_on_error,
                 )
+                return False
 
             ssh.close()
+            return True
         except paramiko.AuthenticationException:
             MakimLogs.raise_error(
                 f'Authentication failed for host {host_config["host"]}',
                 MakimError.SSH_AUTHENTICATION_FAILED,
             )
+            return False
         except paramiko.SSHException as ssh_exception:
             MakimLogs.raise_error(
                 f'SSH error: {ssh_exception!s}',
                 MakimError.SSH_CONNECTION_ERROR,
                 exit_on_error=exit_on_error,
             )
+            return False
         except Exception as e:
             MakimLogs.raise_error(
                 f'Unexpected error during remote execution: {e!s}',
                 MakimError.SSH_EXECUTION_ERROR,
                 exit_on_error=exit_on_error,
             )
+            return False
 
     def _render_host_config(
         self, host_config: dict[str, Any], env: dict[str, str]
@@ -914,7 +921,7 @@ class Makim:
 
     def _run_command(
         self, args: dict[str, Any], exit_on_error: bool = True
-    ) -> None:
+    ) -> bool:
         cmd = self.task_data.get('run', '').strip()
         remote_host = self.task_data.get('remote')
 
@@ -968,7 +975,7 @@ class Makim:
 
         width, _ = get_terminal_size()
 
-        def process_matrix_combination(matrix_vars: dict[str, Any]) -> None:
+        def process_matrix_combination(matrix_vars: dict[str, Any]) -> bool:
             # Update environment variables
             for k, v in env.items():
                 os.environ[k] = v
@@ -1009,27 +1016,33 @@ class Makim:
                             """,
                             MakimError.REMOTE_HOST_NOT_FOUND,
                         )
-                    self._call_shell_remote(
+                    return self._call_shell_remote(
                         current_cmd,
                         cast(dict[str, Any], host_config),
                         exit_on_error=exit_on_error,
                     )
                 else:
                     out_stream, err_stream = self._get_output_stream()
-                    self._call_shell_app(
+                    return self._call_shell_app(
                         current_cmd,
                         out_stream,
                         err_stream,
                         exit_on_error=exit_on_error,
                     )
+            return True
 
         # Run command for each matrix combination
+        all_success = True
         for matrix_vars in matrix_combinations or [{}]:
-            process_matrix_combination(matrix_vars)
+            if not process_matrix_combination(matrix_vars):
+                all_success = False
+                if exit_on_error:
+                    break
 
         # move back the environment variable to the previous values
         os.environ.clear()
         os.environ.update(self.env_scoped)
+        return all_success
 
     def _get_output_stream(self) -> tuple[TextIO, TextIO]:
         """Set up logging streams based on task log configuration."""
@@ -1088,8 +1101,7 @@ class Makim:
 
         if not retry_config or retry_count == 1:
             try:
-                self._run_command(args, exit_on_error=False)
-                return True
+                return self._run_command(args, exit_on_error=False)
             except Exception:
                 return False
 
@@ -1099,20 +1111,23 @@ class Makim:
                 MakimLogs.print_info(
                     f'[Retry] Attempt {attempt}/{retry_count}'
                 )
-                self._run_command(args, exit_on_error=False)
-                return True
+                if self._run_command(args, exit_on_error=False):
+                    return True
             except Exception:
-                if attempt == retry_count:
-                    MakimLogs.print_warning(
-                        f'[Retry] All {retry_count} retries failed.'
-                    )
-                    return False
-                attempt += 1
+                # Exception caught, will retry or fail based on retry_count
+                pass  # nosec B110
+
+            if attempt == retry_count:
                 MakimLogs.print_warning(
-                    f'[Retry] Attempt {attempt}/{retry_count}.'
-                    f' Retrying in {delay} seconds...',
+                    f'[Retry] All {retry_count} retries failed.'
                 )
-                await asyncio.sleep(delay)
+                return False
+            attempt += 1
+            MakimLogs.print_warning(
+                f'[Retry] Attempt {attempt}/{retry_count}.'
+                f' Retrying in {delay} seconds...',
+            )
+            await asyncio.sleep(delay)
         return False
 
     # public methods
@@ -1134,7 +1149,20 @@ class Makim:
         self.env = self._load_dotenv(self.global_data)
 
     def run(self, args: dict[str, Any]) -> bool:
-        """Run makim task code."""
+        """Run makim task code.
+
+        Returns
+        -------
+        bool
+            True if the task completed successfully or if ignore-errors is
+            enabled, False otherwise.
+
+        Note
+        ----
+        API Change: This method now returns bool instead of None. This change
+        enables proper failure hook execution and ignore-errors functionality.
+        External callers should be updated to handle the boolean return value.
+        """
         self.args = args
 
         # setup
@@ -1170,7 +1198,7 @@ class Makim:
             if retry:
                 success = asyncio.run(self._run_with_retry(args))
             else:
-                self._run_command(
+                success = self._run_command(
                     args, exit_on_error=not (failure_hook or ignore_errors)
                 )
         except Exception:
@@ -1179,7 +1207,9 @@ class Makim:
         if not success and failure_hook:
             self._run_hooks(args, 'failure')
 
-        if success or ignore_errors:
+        # Run post-run hooks if task succeeded, or no failure hook exists, or
+        # ignoring errors
+        if success or not failure_hook or ignore_errors:
             self._run_hooks(args, 'post-run')
 
         return success or ignore_errors

@@ -27,6 +27,7 @@ groups:
       clean-logs:
         help: This task removes all log files
         run: |
+          mkdir -p ./tests/smoke/logs
           rm -f ./tests/smoke/logs/failure_hook.txt
           rm -f ./tests/smoke/logs/post_hook.txt
           rm -f ./tests/smoke/logs/pre_hook.txt
