@@ -216,14 +216,13 @@ class Makim:
 
         try:
             p.wait()
-            # Explicitly check exit code for defense in depth
-            returncode = getattr(p, 'returncode', None)
-            if returncode is None or returncode != 0:
-                error_code = returncode if returncode is not None else 1
+            # Check exit code when available
+            returncode = getattr(p, 'returncode', 0)
+            if returncode != 0:
                 MakimLogs.raise_error(
-                    f'Command exited with code {error_code}',
+                    f'Command exited with code {returncode}',
                     MakimError.SH_ERROR_RETURN_CODE,
-                    error_code,
+                    returncode,
                     exit_on_error=exit_on_error,
                 )
                 return False
