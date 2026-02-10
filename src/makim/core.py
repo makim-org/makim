@@ -257,6 +257,7 @@ class Makim:
     def _call_shell_remote(
         self, cmd: str, host_config: dict[str, Any], exit_on_error: bool = True
     ) -> bool:
+        ssh: paramiko.SSHClient | None = None
         try:
             # Render the host configuration values
             env, _ = self._load_scoped_data('task')
@@ -288,7 +289,6 @@ class Makim:
                 )
                 return False
 
-            ssh.close()
             return True
         except paramiko.AuthenticationException:
             MakimLogs.raise_error(
@@ -311,6 +311,12 @@ class Makim:
                 exit_on_error=exit_on_error,
             )
             return False
+        finally:
+            if ssh is not None:
+                try:
+                    ssh.close()
+                except Exception:
+                    pass  # nosec B110 - Ignore errors when closing SSH connection
 
     def _render_host_config(
         self, host_config: dict[str, Any], env: dict[str, str]
@@ -925,8 +931,11 @@ class Makim:
                 )
             )
 
+        # Update with original args, excluding 'task' to preserve hook task
+        args_hook.update(
+            {k: v for k, v in args_hook_original.items() if k != 'task'}
+        )
         args_hook['task'] = hook_data['task']
-        args_hook.update(args_hook_original)
         return args_hook
 
     def _execute_hook(
