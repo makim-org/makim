@@ -612,18 +612,19 @@ class Makim:
 
         merged_vars: dict[str, str] = {}
         for env_file in env_files:
-            if not env_file.startswith('/'):
-                # use makim file as reference for the working directory
-                # for the .env file
-                env_file = str(Path(self.file).parent / env_file)
+            env_path = (
+                str(Path(self.file).parent / env_file)
+                if not env_file.startswith('/')
+                else env_file
+            )
 
-            if not Path(env_file).exists():
+            if not Path(env_path).exists():
                 MakimLogs.raise_error(
-                    f'The given env-file `{env_file}` was not found.',
+                    f'The given env-file `{env_path}` was not found.',
                     MakimError.MAKIM_ENV_FILE_NOT_FOUND,
                 )
 
-            env_vars = dotenv.dotenv_values(env_file)
+            env_vars = dotenv.dotenv_values(env_path)
             merged_vars.update({k: (v or '') for k, v in env_vars.items()})
 
         return merged_vars
