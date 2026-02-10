@@ -216,8 +216,8 @@ class Makim:
 
         try:
             p.wait()
+            return True
         except xh.ErrorReturnCode as e:
-            os.close(fd)
             MakimLogs.raise_error(
                 str(e.full_cmd),
                 MakimError.SH_ERROR_RETURN_CODE,
@@ -226,15 +226,19 @@ class Makim:
             )
             return False
         except KeyboardInterrupt:
-            os.close(fd)
             pid = p.pid
             p.kill_group()
             MakimLogs.raise_error(
                 f'Process {pid} killed.',
                 MakimError.SH_KEYBOARD_INTERRUPT,
+                exit_on_error=exit_on_error,
             )
-        os.close(fd)
-        return True
+            return False
+        finally:
+            try:
+                os.close(fd)
+            except OSError:
+                pass  # fd already closed
 
     def _call_shell_remote(
         self, cmd: str, host_config: dict[str, Any], exit_on_error: bool = True
@@ -276,6 +280,7 @@ class Makim:
             MakimLogs.raise_error(
                 f'Authentication failed for host {host_config["host"]}',
                 MakimError.SSH_AUTHENTICATION_FAILED,
+                exit_on_error=exit_on_error,
             )
             return False
         except paramiko.SSHException as ssh_exception:
@@ -1015,7 +1020,9 @@ class Makim:
                             not found.
                             """,
                             MakimError.REMOTE_HOST_NOT_FOUND,
+                            exit_on_error=exit_on_error,
                         )
+                        return False
                     return self._call_shell_remote(
                         current_cmd,
                         cast(dict[str, Any], host_config),
