@@ -155,7 +155,7 @@ jobs:
 
       - name: Semantic Release PR Title Check
         uses: osl-incubator/semantic-release-pr-title-check@v1.4.1
-        if: success() || failure()
+        if: ${{ always() }}
         with:
           convention-name: conventionalcommits
 

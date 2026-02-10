@@ -913,12 +913,18 @@ class Makim:
 
         try:
             return bool(makim_hook.run(deepcopy(args_hook)))
-        except Exception:
+        except Exception as e:
             hook_task_copy = deepcopy(makim_hook)
             hook_task_copy._change_task(hook_task_name)
             hook_ignore_errors = hook_task_copy.task_data.get(
                 'options', {}
             ).get('ignore-errors', False)
+
+            # Log exception for debugging even if ignore-errors is True
+            if self.verbose or not hook_ignore_errors:
+                MakimLogs.print_warning(
+                    f'Hook task "{hook_task_name}" failed with exception: {e}'
+                )
 
             if not hook_ignore_errors:
                 return False
@@ -1191,12 +1197,15 @@ class Makim:
         ignore_errors = self.task_data.get('options', {}).get(
             'ignore-errors', False
         )
+        failure_hook = bool(self.task_data.get('hooks', {}).get('failure'))
 
         pre_run_success = self._run_hooks(args, 'pre-run')
         if not pre_run_success and not ignore_errors:
+            # Trigger failure hook if pre-run hooks failed
+            if failure_hook:
+                self._run_hooks(args, 'failure')
             return False
 
-        failure_hook = bool(self.task_data.get('hooks', {}).get('failure'))
         retry = bool(self.task_data.get('retry'))
 
         success = True
