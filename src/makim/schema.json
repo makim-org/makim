@@ -330,6 +330,18 @@
                     "if": {
                       "type": "string",
                       "description": "Conditional expression to execute the task."
+                    },
+                    "options": {
+                      "type": "object",
+                      "description": "Additionals configuration options for task",
+                      "properties": {
+                        "ignore-errors": {
+                          "type": "boolean",
+                          "description": "Ignore task failures and continue execution.",
+                          "default": false
+                        }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "additionalProperties": false
