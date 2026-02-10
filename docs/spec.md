@@ -15,7 +15,7 @@ A `.makim.yaml` file consists of the following top-level sections:
 - `hosts`
 - `vars`
 - `env`
-- `env-file`
+- `env-files`
 
 Each section is explained below in detail.
 
@@ -503,8 +503,9 @@ tasks:
 
 ### Description
 
-Loads environment variables from an external `.env` file. This is useful for
-managing secrets and configurations separately.
+Loads environment variables from external `.env` files. This is useful for
+managing secrets and configurations separately. You can specify a single file or
+multiple files.
 
 ### Supported Scopes:
 
@@ -514,14 +515,38 @@ managing secrets and configurations separately.
 
 ### Structure
 
+Single file:
+
 ```
-env-file: <path_to_env_file>
+env-files: <path_to_env_file>
 ```
+
+Multiple files:
+
+```
+env-files:
+  - <path_to_env_file_1>
+  - <path_to_env_file_2>
+```
+
+When multiple files are specified, they are loaded in order. Variables from
+later files override those from earlier files.
 
 ### Example
 
+Single file:
+
 ```
-env-file: .env
+env-files: .env
 ```
 
-This will automatically load the environment variables defined in `.env`.
+Multiple files:
+
+```
+env-files:
+  - .env.defaults
+  - .env.local
+```
+
+This will load environment variables from both files. Variables in `.env.local`
+will override those with the same name in `.env.defaults`.

@@ -253,6 +253,11 @@ groups:
           makim $VERBOSE_FLAG --file $MAKIM_FILE rerender-env.from-global
           makim $VERBOSE_FLAG --file $MAKIM_FILE rerender-env.from-group
           makim $VERBOSE_FLAG --file $MAKIM_FILE rerender-env.from-task
+          makim $VERBOSE_FLAG --file $MAKIM_FILE multi-env-files.test-global-multi
+          makim $VERBOSE_FLAG --file $MAKIM_FILE multi-env-files.test-group-multi
+          makim $VERBOSE_FLAG --file $MAKIM_FILE multi-env-files.test-task-multi
+          makim $VERBOSE_FLAG --file $MAKIM_FILE multi-env-files.test-multi-unique-vars
+          makim $VERBOSE_FLAG --file $MAKIM_FILE multi-env-files.test-multi-override-order
 
       test-vars:
         help: Test makim using a vars makim file

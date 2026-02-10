@@ -602,23 +602,31 @@ class Makim:
         self.tmp_suffix = cmd_tmp_suffix
 
     def _load_dotenv(self, data_scope: dict[str, Any]) -> dict[str, str]:
-        env_file = data_scope.get('env-file')
-        if not env_file:
+        env_files = data_scope.get('env-files')
+        if not env_files:
             return {}
 
-        if not env_file.startswith('/'):
-            # use makim file as reference for the working directory
-            # for the .env file
-            env_file = str(Path(self.file).parent / env_file)
+        # normalize to list
+        if isinstance(env_files, str):
+            env_files = [env_files]
 
-        if not Path(env_file).exists():
-            MakimLogs.raise_error(
-                'The given env-file was not found.',
-                MakimError.MAKIM_ENV_FILE_NOT_FOUND,
-            )
+        merged_vars: dict[str, str] = {}
+        for env_file in env_files:
+            if not env_file.startswith('/'):
+                # use makim file as reference for the working directory
+                # for the .env file
+                env_file = str(Path(self.file).parent / env_file)
 
-        env_vars = dotenv.dotenv_values(env_file)
-        return {k: (v or '') for k, v in env_vars.items()}
+            if not Path(env_file).exists():
+                MakimLogs.raise_error(
+                    f'The given env-file `{env_file}` was not found.',
+                    MakimError.MAKIM_ENV_FILE_NOT_FOUND,
+                )
+
+            env_vars = dotenv.dotenv_values(env_file)
+            merged_vars.update({k: (v or '') for k, v in env_vars.items()})
+
+        return merged_vars
 
     def _load_scoped_data(
         self, scope: str

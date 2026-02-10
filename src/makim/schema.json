@@ -4,9 +4,21 @@
   "type": "object",
   "required": ["groups"],
   "properties": {
-    "env-file": {
-      "type": "string",
-      "description": "Path to the environment file."
+    "env-files": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Path to a single environment file."
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Paths to multiple environment files. Later files override earlier ones."
+        }
+      ],
+      "description": "Path(s) to environment file(s)."
     },
     "env": {
       "type": "object",
@@ -76,9 +88,21 @@
               "type": "string",
               "description": "Description of the group."
             },
-            "env-file": {
-              "type": "string",
-              "description": "Path to the environment file for the group."
+            "env-files": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Path to a single environment file."
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Paths to multiple environment files. Later files override earlier ones."
+                }
+              ],
+              "description": "Path(s) to environment file(s) for the group."
             },
             "env": {
               "type": "object",
@@ -122,9 +146,21 @@
                       "type": "string",
                       "description": "Command to execute."
                     },
-                    "env-file": {
-                      "type": "string",
-                      "description": "Path to the environment file for the task."
+                    "env-files": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "description": "Path to a single environment file."
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Paths to multiple environment files. Later files override earlier ones."
+                        }
+                      ],
+                      "description": "Path(s) to environment file(s) for the task."
                     },
                     "env": {
                       "type": "object",
