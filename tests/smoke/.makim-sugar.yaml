@@ -1,4 +1,4 @@
-env-file: .env
+env-files: .env
 backend: bash
 groups:
   containers:

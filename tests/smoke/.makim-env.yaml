@@ -1,4 +1,4 @@
-env-file: .env
+env-files: .env
 env:
   GLOBAL_VAR_1: "1"
   GLOBAL_VAR_2: "2"
@@ -6,7 +6,7 @@ groups:
   global-scope:
     tasks:
       test-var-env-file:
-        help: Test env variable defined in the global scope from env-file
+        help: Test env variable defined in the global scope from env-files
         run: |
           import os
           assert str(os.getenv("ENV")) == "dev"
@@ -18,13 +18,13 @@ groups:
           assert str(os.getenv("GLOBAL_VAR_1")) == "1"
           assert str(os.getenv("GLOBAL_VAR_2")) == "2"
   group-scope:
-    env-file: .env-group
+    env-files: .env-group
     env:
       GROUP_VAR_1: "1"
       GROUP_VAR_2: "2"
     tasks:
       test-var-env-file:
-        help: Test env variable defined in the global scope from env-file
+        help: Test env variable defined in the global scope from env-files
         run: |
           import os
           assert str(os.getenv("ENV")) == "prod"
@@ -39,15 +39,15 @@ groups:
   task-scope:
     tasks:
       test-var-env-file:
-        help: Test env variable defined in the global scope from env-file
-        env-file: .env-task
+        help: Test env variable defined in the global scope from env-files
+        env-files: .env-task
         run: |
           import os
           assert str(os.getenv("ENV")) == "test"
 
       test-var-env:
         help: Test env variable defined in the global scope in `env` section
-        env-file: .env-task
+        env-files: .env-task
         env:
           TARGET_VAR_1: "1"
           TARGET_VAR_2: "2"
@@ -59,7 +59,7 @@ groups:
           assert str(os.getenv("ENV")) == "staging"
 
   rerender-env:
-    env-file: .env-group
+    env-files: .env-group
     env:
       GROUP_VAR_1: "1"
       GROUP_VAR_2: "2"
@@ -76,7 +76,7 @@ groups:
 
       from-global:
         help: Test a rerender from the global scope
-        env-file: .env
+        env-files: .env
         hooks:
           pre-run:
             - task: rerender-env.dep
@@ -94,7 +94,7 @@ groups:
 
       from-group:
         help: Test a rerender from the group scope
-        env-file: .env-group
+        env-files: .env-group
         env:
           MYVAR_1: ${{ env.GROUP_VAR_1 }}
           MYVAR_2: ${{ env.GROUP_VAR_2 }}
@@ -107,9 +107,55 @@ groups:
 
       from-task:
         help: Test a rerender from the group scope
-        env-file: .env-task
+        env-files: .env-task
         env:
           MYVAR_1: ${{ env.ENV }}
         run: |
           import os
           assert str(os.getenv("MYVAR_1")) == "test"
+
+  multi-env-files:
+    tasks:
+      test-global-multi:
+        help: Test multiple env-files from global scope are merged correctly
+        run: |
+          import os
+          assert str(os.getenv("ENV")) == "dev"
+
+      test-group-multi:
+        help: Test multiple env-files at group scope with override
+        env-files:
+          - .env
+          - .env-group
+        run: |
+          import os
+          assert str(os.getenv("ENV")) == "prod"
+
+      test-task-multi:
+        help: Test multiple env-files at task scope with override
+        env-files:
+          - .env
+          - .env-group
+          - .env-task
+        run: |
+          import os
+          assert str(os.getenv("ENV")) == "test"
+
+      test-multi-unique-vars:
+        help: Test multiple env-files with unique variables from each file
+        env-files:
+          - .env-multi-1
+          - .env-multi-2
+        run: |
+          import os
+          assert str(os.getenv("MULTI_VAR_1")) == "from_file_1"
+          assert str(os.getenv("MULTI_VAR_2")) == "from_file_2"
+
+      test-multi-override-order:
+        help: Test that later files override earlier files
+        env-files:
+          - .env-multi-1
+          - .env-multi-2
+        run: |
+          import os
+          assert str(os.getenv("SHARED_VAR")) == "from_file_2"

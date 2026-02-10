@@ -32,11 +32,13 @@ variable defined in the _task_ scope.
 
 Moreover, `env` is a bit more complex, as its value can be defined in two
 different ways: either through the `env` attribute in the `.makim.yaml` file or
-from an environment file specified in the `env-file` attribute. First, the
-`env-file` is loaded into memory, and then the variables defined in the `env`
-attribute are loaded. In other words, any variable defined in the file for the
-given `env-file` will be overridden by a variable of the same name defined in
-the `env` attribute. This process also respects the order of scopes.
+from environment files specified in the `env-files` attribute. The `env-files`
+attribute accepts a single file path or a list of file paths. When multiple
+files are specified, they are loaded in order, with later files overriding
+variables from earlier ones. Then, the variables defined in the `env` attribute
+are loaded. In other words, any variable defined in the environment files will
+be overridden by a variable of the same name defined in the `env` attribute.
+This process also respects the order of scopes.
 
 PS: **Makim** utilizes system environment variables as the initial scope for the
 variables.
