@@ -1,6 +1,13 @@
 # Release Notes
 ---
 
+# [1.29.0](https://github.com/makim-org/makim/compare/1.28.0...1.29.0) (2026-02-10)
+
+
+### Features
+
+* Add support for multiple environment files ([#225](https://github.com/makim-org/makim/issues/225)) ([11307c2](https://github.com/makim-org/makim/commit/11307c2df1ce2c4ce85b7efb6d14eff9ca54fbdf))
+
 # [1.28.0](https://github.com/makim-org/makim/compare/1.27.0...1.28.0) (2026-02-10)
 
 
