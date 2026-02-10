@@ -218,11 +218,12 @@ class Makim:
             p.wait()
             # Explicitly check exit code for defense in depth
             returncode = getattr(p, 'returncode', None)
-            if returncode and returncode != 0:
+            if returncode is None or returncode != 0:
+                error_code = returncode if returncode is not None else 1
                 MakimLogs.raise_error(
-                    f'Command exited with code {returncode}',
+                    f'Command exited with code {error_code}',
                     MakimError.SH_ERROR_RETURN_CODE,
-                    returncode,
+                    error_code,
                     exit_on_error=exit_on_error,
                 )
                 return False
@@ -249,6 +250,10 @@ class Makim:
                 os.close(fd)
             except OSError:
                 pass  # fd already closed
+            try:
+                os.unlink(filepath)
+            except OSError:
+                pass  # file already removed or inaccessible
 
     def _call_shell_remote(
         self, cmd: str, host_config: dict[str, Any], exit_on_error: bool = True
