@@ -48,8 +48,8 @@ groups:
         log:
           path: ./tests/smoke/logs/ignore_error_task.txt
         run: |
-          print("Task will fail but execution should continue")
-          assert 1 == 2
+          echo "Task will fail but execution should continue"
+          exit 1
 
       after-ignored-error:
         help: This task runs after a failed task with ignore-errors
@@ -66,8 +66,8 @@ groups:
         log:
           path: ./tests/smoke/logs/retry_ignore_task.txt
         run: |
-          print("Task will retry, fail, but continue execution")
-          assert 1 == 2
+          echo "Task will retry, fail, but continue execution"
+          exit 1
 
       ignore-error-with-hook:
         help: This task will fail, trigger failure hook, but continue execution
@@ -79,8 +79,8 @@ groups:
         log:
           path: ./tests/smoke/logs/ignore_with_failure_hook.txt
         run: |
-          print("Task will fail, run failure hook, but continue execution")
-          assert 1 == 2
+          echo "Task will fail, run failure hook, but continue execution"
+          exit 1
 
       retry-failure-ignore:
         help: This task will retry, fail, run failure hook, but continue execution
@@ -94,8 +94,8 @@ groups:
         log:
           path: ./tests/smoke/logs/retry_failure_ignore.txt
         run: |
-          print("Task will retry, fail, run failure hook, but continue execution")
-          assert 1 == 2
+          echo "Task will retry, fail, run failure hook, but continue execution"
+          exit 1
 
       pre-run-hook:
         help: This task will run error task and correct task in pre hook

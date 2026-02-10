@@ -820,7 +820,10 @@ class Makim:
             makim_hook.env_scoped = deepcopy(env)
 
             if not self._should_run_hook(
-                hook_data, original_args_clean, variables
+                hook_data,
+                original_args_clean,
+                variables,
+                makim_hook.env_scoped,
             ):
                 continue
 
@@ -848,6 +851,7 @@ class Makim:
         hook_data: dict[str, Any],
         original_args_clean: dict[str, Any],
         variables: dict[str, Any],
+        env_scoped: dict[str, Any],
     ) -> bool:
         """Check if a hook should be run based on its conditional."""
         if_stmt = hook_data.get('if')
@@ -856,7 +860,7 @@ class Makim:
 
         result = TEMPLATE.from_string(str(if_stmt)).render(
             args=original_args_clean,
-            env=self.env_scoped,
+            env=env_scoped,
             vars=variables,
         )
 

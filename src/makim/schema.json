@@ -337,10 +337,11 @@
                       "properties": {
                         "ignore-errors": {
                           "type": "boolean",
-                          "description": "Number of times to retry the task on failure.",
+                          "description": "Ignore task failures and continue execution.",
                           "default": false
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "additionalProperties": false

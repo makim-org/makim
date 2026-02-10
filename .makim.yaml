@@ -618,6 +618,7 @@ groups:
           post-run:
             - task: clean.tmp
         run: |
+          set -euo pipefail
           export VERBOSE_FLAG='${{ "--verbose" if args.verbose_mode else "" }}'
           makim $VERBOSE_FLAG --file $MAKIM_FILE --help
           makim $VERBOSE_FLAG --file $MAKIM_FILE --version
