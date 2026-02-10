@@ -216,6 +216,16 @@ class Makim:
 
         try:
             p.wait()
+            # Explicitly check exit code for defense in depth
+            returncode = getattr(p, 'returncode', None)
+            if returncode and returncode != 0:
+                MakimLogs.raise_error(
+                    f'Command exited with code {returncode}',
+                    MakimError.SH_ERROR_RETURN_CODE,
+                    returncode,
+                    exit_on_error=exit_on_error,
+                )
+                return False
             return True
         except xh.ErrorReturnCode as e:
             MakimLogs.raise_error(
@@ -826,36 +836,49 @@ class Makim:
         all_hooks_succeeded = True
 
         for hook_data in self.task_data['hooks'][hook_type]:
-            env, variables = makim_hook._load_scoped_data('task')
-            for k, v in env.items():
-                os.environ[k] = v
-            makim_hook.env_scoped = deepcopy(env)
+            # Snapshot environment before hook execution
+            prev_env = os.environ.copy()
 
-            if not self._should_run_hook(
-                hook_data,
-                original_args_clean,
-                variables,
-                makim_hook.env_scoped,
-            ):
-                continue
+            try:
+                env, variables = makim_hook._load_scoped_data('task')
+                for k, v in env.items():
+                    os.environ[k] = v
+                makim_hook.env_scoped = deepcopy(env)
 
-            args_hook = self._prepare_hook_args(
-                hook_data, makim_hook, original_args_clean, args_hook_original
-            )
+                if not self._should_run_hook(
+                    hook_data,
+                    original_args_clean,
+                    variables,
+                    makim_hook.env_scoped,
+                ):
+                    continue
 
-            hook_success = self._execute_hook(makim_hook, args_hook, hook_data)
+                args_hook = self._prepare_hook_args(
+                    hook_data,
+                    makim_hook,
+                    original_args_clean,
+                    args_hook_original,
+                )
 
-            if not hook_success:
-                hook_task_name = hook_data['task']
-                hook_task_copy = deepcopy(makim_hook)
-                hook_task_copy._change_task(hook_task_name)
-                hook_ignore_errors = hook_task_copy.task_data.get(
-                    'options', {}
-                ).get('ignore-errors', False)
+                hook_success = self._execute_hook(
+                    makim_hook, args_hook, hook_data
+                )
 
-                if not hook_ignore_errors:
-                    all_hooks_succeeded = False
-                    break
+                if not hook_success:
+                    hook_task_name = hook_data['task']
+                    hook_task_copy = deepcopy(makim_hook)
+                    hook_task_copy._change_task(hook_task_name)
+                    hook_ignore_errors = hook_task_copy.task_data.get(
+                        'options', {}
+                    ).get('ignore-errors', False)
+
+                    if not hook_ignore_errors:
+                        all_hooks_succeeded = False
+                        break
+            finally:
+                # Restore environment after hook execution
+                os.environ.clear()
+                os.environ.update(prev_env)
         return all_hooks_succeeded
 
     def _should_run_hook(
