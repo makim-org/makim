@@ -27,6 +27,7 @@ groups:
         help: Build documentation
         run: |
           mkdocs build --config-file mkdocs.yaml
+          echo "docs.makim.org" > ./build/CNAME
 
       preview:
         help: Preview documentation page locally
