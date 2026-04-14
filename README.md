@@ -1,6 +1,6 @@
 # Makim
 
-![CI](https://img.shields.io/github/actions/workflow/status/osl-incubator/makim/main.yaml?logo=github&label=CI)
+![CI](https://img.shields.io/github/actions/workflow/status/makim-org/makim/main.yaml?logo=github&label=CI)
 [![Python Versions](https://img.shields.io/pypi/pyversions/makim)](https://pypi.org/project/makim/)
 [![Package Version](https://img.shields.io/pypi/v/makim?color=blue)](https://pypi.org/project/makim/)
 ![License](https://img.shields.io/pypi/l/makim?color=blue)
@@ -11,7 +11,7 @@ improving task definition and dependency management. Instead of using the
 **Makefile** format, it utilizes **YAML** for defining tasks.
 
 - License: BSD 3 Clause
-- Documentation: [Makim Docs](https://osl-incubator.github.io/makim)
+- Documentation: [Makim Docs](https://makim-org.github.io/makim)
 
 ---
 
@@ -118,7 +118,7 @@ $ makim --help
 │ cron                                Tasks Scheduler                          │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
- If you have any problem, open an issue at: https://github.com/osl-incubator/makim
+ If you have any problem, open an issue at: https://github.com/makim-org/makim
 ```
 
 As you can see, the help menu automatically adds information defined by all the

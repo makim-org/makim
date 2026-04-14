@@ -134,3 +134,6 @@ tests/smoke/logs
 # Ignore fpm packaged files
 makim_*
 makim-*
+
+# vscode
+.vscode

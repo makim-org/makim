@@ -222,7 +222,7 @@ def create_dynamic_command(
         args_param_list.append(f'"--{arg}": {arg_clean}')
 
     args_param_str = '{' + ','.join(args_param_list) + '}'
-    group_name = name.split('.')[0]
+    group_name = name.split('.', maxsplit=1)[0]
 
     decorator = app.command(
         name,

@@ -217,13 +217,13 @@ class MakimScheduler:
         self.job_store_path = Path.home() / '.makim' / 'jobs.sqlite'
         self.job_history_path = Path.home() / '.makim' / 'history.json'
         self._setup_directories()
-        self._initialize_scheduler()
         self.job_history: dict[str, list[Dict[str, Any]]] = (
             self._load_history()
         )
 
         init_globals(self.config_file, self.job_history_path)
 
+        self._initialize_scheduler()
         self._sync_jobs_with_config(
             makim_instance.global_data.get('scheduler', {})
         )

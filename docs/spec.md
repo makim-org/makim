@@ -15,7 +15,7 @@ A `.makim.yaml` file consists of the following top-level sections:
 - `hosts`
 - `vars`
 - `env`
-- `env-file`
+- `env-files`
 
 Each section is explained below in detail.
 
@@ -75,9 +75,11 @@ tasks:
     help: <description>
     args: <arguments>
     env: <environment_variables>
-    hooks: <pre/post-run_hooks>
+    hooks: <pre-run/post-run/failure_hooks>
     matrix: <parameter_combinations>
     log: <file_logging_configuration>
+    if: <validation_conditionals>
+    options: <additional_options>
     run: <command>
 {% endraw %}
 ```
@@ -103,8 +105,8 @@ tasks:
 
 ### Description
 
-Defines arguments that tasks can accept with types, defaults, and help
-descriptions.
+Defines arguments that tasks can accept with types, defaults,help descriptions
+and validation options.
 
 ### Structure
 
@@ -115,16 +117,27 @@ args:
     default: <default_value>
     interactive: <true/false>
     help: <description>
+    validations:
+      <validation-type>: <validation_value>
 ```
+
+> You can provide `validation-type` options similar to
+> [JSON schema validation options](https://json-schema.org/draft/2020-12/json-schema-validation#name-validation-keywords-for-num)
 
 ### Example
 
 ```yaml
 args:
   env:
-    type: str
+    type: string
     default: "dev"
     help: Environment setting
+  username:
+    type: string
+    help: Username for system access
+    validations:
+      min-length: 3
+      max-length: 32
 ```
 
 ---
@@ -134,8 +147,8 @@ args:
 ### Description
 
 Hooks define tasks that run before (`pre-run`) or after (`post-run`) a task
-executes. They can also include an `if` condition to control when the hook
-should be triggered.
+executes or after (`failure`) a task execution fails. They can also include an
+`if` condition to control when the hook should be triggered.
 
 ### Structure
 
@@ -145,6 +158,9 @@ hooks:
     - task: <task_name>
       if: <condition>
   post-run:
+    - task: <task_name>
+      if: <condition>
+  failure:
     - task: <task_name>
       if: <condition>
 ```
@@ -161,6 +177,8 @@ tasks:
           if: ${{ vars.REBUILD == "true" }}
       post-run:
         - task: notify
+      failure:
+        - task: failure-notify
     run: echo "Building project..."
 {% endraw %}
 ```
@@ -397,7 +415,54 @@ tasks:
 
 ---
 
-## 12. Variables
+## 12. Ignore Error Option
+
+### Description
+
+The `ignore-errors` option allows a task to continue executing subsequent tasks
+even if it fails. When `ignore-errors: true` is set under `options`, the failure
+of that task does not interrupt the execution flow.
+
+### Structure
+
+```yaml
+options:
+  ignore-errors: <true/false>
+```
+
+> The default value for `ignore-errors` is set to `false`
+
+### Example
+
+```yaml
+groups:
+  deploy:
+    tasks:
+      clear-cache:
+        help: Attempt to clear CDN cache (optional)
+        options:
+          ignore-errors: true
+        run: |
+          echo "Clearing CDN cache..."
+          # Simulate possible failure
+          assert 1 == 2
+
+      deploy-app:
+        help: Deploy the application
+        run: echo "Deploying application to production..."
+
+      main-deploy:
+        help: Deployment pipeline
+        hooks:
+          pre-run:
+            - task: deploy.clear-cache
+            - task: deploy.deploy-app
+        run: echo "Deployment complete."
+```
+
+---
+
+## 13. Variables
 
 ### Description
 
@@ -434,12 +499,13 @@ tasks:
 {% endraw %}
 ```
 
-## 13. Environment Variables
+## 14. Environment Variables
 
 ### Description
 
-Loads environment variables from an external `.env` file. This is useful for
-managing secrets and configurations separately.
+Loads environment variables from external `.env` files. This is useful for
+managing secrets and configurations separately. You can specify a single file or
+multiple files.
 
 ### Supported Scopes:
 
@@ -449,14 +515,38 @@ managing secrets and configurations separately.
 
 ### Structure
 
+Single file:
+
 ```
-env-file: <path_to_env_file>
+env-files: <path_to_env_file>
 ```
+
+Multiple files:
+
+```
+env-files:
+  - <path_to_env_file_1>
+  - <path_to_env_file_2>
+```
+
+When multiple files are specified, they are loaded in order. Variables from
+later files override those from earlier files.
 
 ### Example
 
+Single file:
+
 ```
-env-file: .env
+env-files: .env
 ```
 
-This will automatically load the environment variables defined in `.env`.
+Multiple files:
+
+```
+env-files:
+  - .env.defaults
+  - .env.local
+```
+
+This will load environment variables from both files. Variables in `.env.local`
+will override those with the same name in `.env.defaults`.

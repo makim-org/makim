@@ -1,6 +1,35 @@
 # Release Notes
 ---
 
+# [1.29.0](https://github.com/makim-org/makim/compare/1.28.0...1.29.0) (2026-02-10)
+
+
+### Features
+
+* Add support for multiple environment files ([#225](https://github.com/makim-org/makim/issues/225)) ([11307c2](https://github.com/makim-org/makim/commit/11307c2df1ce2c4ce85b7efb6d14eff9ca54fbdf))
+
+# [1.28.0](https://github.com/makim-org/makim/compare/1.27.0...1.28.0) (2026-02-10)
+
+
+### Bug Fixes
+
+* initialize globals before scheduler to prevent startup crash ([#222](https://github.com/makim-org/makim/issues/222)) ([b62ed5c](https://github.com/makim-org/makim/commit/b62ed5ce3671be7f37a87c94958ed4a6d18474f4))
+* repository metadata still points to old org ([#220](https://github.com/makim-org/makim/issues/220)) ([1a3cc79](https://github.com/makim-org/makim/commit/1a3cc7976d84a595552e7c7082a29e73b949fb63))
+
+
+### Features
+
+* Add ignore error task option to continue execution on task failure ([#195](https://github.com/makim-org/makim/issues/195)) ([9c5f815](https://github.com/makim-org/makim/commit/9c5f8157e181426b14afbb3fdb59df3bae879f3e))
+* Add JSON schema validations for task arguments ([#192](https://github.com/makim-org/makim/issues/192)) ([10f12ab](https://github.com/makim-org/makim/commit/10f12abf98cf963e9de278711c2848b43281c035))
+* add schema sync workflow for makim-lsp ([#204](https://github.com/makim-org/makim/issues/204)) ([d6db92c](https://github.com/makim-org/makim/commit/d6db92c6f506da6dadedec6683238f057882bf27))
+
+# [1.27.0](https://github.com/makim-org/makim/compare/1.26.3...1.27.0) (2025-07-02)
+
+
+### Features
+
+* add architecture parameter to packaging scripts for better flexibility ([#201](https://github.com/makim-org/makim/issues/201)) ([bacf6a8](https://github.com/makim-org/makim/commit/bacf6a89e09ea964385c1d8469783d9cabd6a603))
+
 ## [1.26.3](https://github.com/makim-org/makim/compare/1.26.2...1.26.3) (2025-06-25)
 
 

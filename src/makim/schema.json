@@ -1,12 +1,24 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Makim Configuration Schema",
+  "title": "Makim configuration schema",
   "type": "object",
   "required": ["groups"],
   "properties": {
-    "env-file": {
-      "type": "string",
-      "description": "Path to the environment file."
+    "env-files": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Path to a single environment file."
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Paths to multiple environment files. Later files override earlier ones."
+        }
+      ],
+      "description": "Path(s) to environment file(s)."
     },
     "env": {
       "type": "object",
@@ -76,9 +88,21 @@
               "type": "string",
               "description": "Description of the group."
             },
-            "env-file": {
-              "type": "string",
-              "description": "Path to the environment file for the group."
+            "env-files": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Path to a single environment file."
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Paths to multiple environment files. Later files override earlier ones."
+                }
+              ],
+              "description": "Path(s) to environment file(s) for the group."
             },
             "env": {
               "type": "object",
@@ -122,9 +146,21 @@
                       "type": "string",
                       "description": "Command to execute."
                     },
-                    "env-file": {
-                      "type": "string",
-                      "description": "Path to the environment file for the task."
+                    "env-files": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "description": "Path to a single environment file."
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Paths to multiple environment files. Later files override earlier ones."
+                        }
+                      ],
+                      "description": "Path(s) to environment file(s) for the task."
                     },
                     "env": {
                       "type": "object",
@@ -151,11 +187,11 @@
                             },
                             "type": {
                               "type": "string",
-                              "enum": ["string", "bool"],
+                              "enum": ["string", "bool", "integer"],
                               "description": "Type of the argument."
                             },
                             "default": {
-                              "type": ["string", "boolean"],
+                              "type": ["string", "boolean", "integer"],
                               "description": "Default value for the argument."
                             },
                             "required": {
@@ -170,6 +206,11 @@
                             "interactive": {
                               "type": "boolean",
                               "description": "Set the argument as interactive."
+                            },
+                            "validations": {
+                              "type": "object",
+                              "description": "JSON schema validations for the argument",
+                              "additionalProperties": true
                             }
                           },
                           "additionalProperties": false
@@ -325,6 +366,18 @@
                     "if": {
                       "type": "string",
                       "description": "Conditional expression to execute the task."
+                    },
+                    "options": {
+                      "type": "object",
+                      "description": "Additionals configuration options for task",
+                      "properties": {
+                        "ignore-errors": {
+                          "type": "boolean",
+                          "description": "Ignore task failures and continue execution.",
+                          "default": false
+                        }
+                      },
+                      "additionalProperties": false
                     }
                   },
                   "additionalProperties": false

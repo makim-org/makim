@@ -3,6 +3,6 @@ env-file: .env
 services:
   project-name: makim-tests
   config-path: containers/compose.yaml
-  default: service1
+  default: [service1]
   available:
     - name: service1

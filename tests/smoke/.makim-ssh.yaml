@@ -1,4 +1,4 @@
-env-file: .env-ssh
+env-files: .env-ssh
 hosts:
   test_container:
     host: ${{ env.SSH_HOST }}

@@ -33,11 +33,11 @@ jobs:
       fail-fast: false
       matrix:
         python_version:
-          - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
           - "3.13"
+          - "3.14"
         os:
           - "ubuntu"
           - "macos"
@@ -87,9 +87,7 @@ jobs:
 
       - name: Run smoke tests using makim and containers-sugar
         if: ${{ matrix.os == 'ubuntu' }}
-        run: |
-          pip install "containers-sugar>=1.17.0"
-          makim smoke-tests.containers
+        run: makim smoke-tests.containers
 
       - name: Run smoke tests using different interpreters
         run: makim smoke-tests.shell-app
@@ -149,9 +147,15 @@ jobs:
       - name: Run smoke test for testing failure hook
         run: makim smoke-tests.failure-hook
 
+      - name: Run smoke test for testing args validation
+        run: makim smoke-tests.arg-validation
+
+      - name: Run smoke test for testing ignore errors option
+        run: makim smoke-tests.ignore-error-option
+
       - name: Semantic Release PR Title Check
         uses: osl-incubator/semantic-release-pr-title-check@v1.4.1
-        if: success() || failure()
+        if: ${{ always() }}
         with:
           convention-name: conventionalcommits
 
@@ -182,7 +186,7 @@ jobs:
           activate-environment: makim
           auto-update-conda: true
           conda-solver: libmamba
-          python-version: "3.9"
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
