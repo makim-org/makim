@@ -76,7 +76,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry env use "$(which python)"
+          poetry env use "$(python -c 'import sys; from pathlib import Path; print(Path(sys.executable).as_posix(), end="")')"
           poetry install
 
       - name: Run smoke tests using simple makim file
