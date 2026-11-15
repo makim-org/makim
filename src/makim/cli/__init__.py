@@ -35,7 +35,7 @@ makim: Makim = Makim()
 
 
 @app.callback(invoke_without_command=True)
-def main(  # noqa: PLR0913
+def main(  # noqa: PLR0913, PLR0917
     ctx: typer.Context,
     version: bool = typer.Option(
         None,
