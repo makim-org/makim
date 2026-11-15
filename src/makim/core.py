@@ -503,7 +503,7 @@ class Makim:
             raise Exception(f'The given scope `{scope}` is not valid.')
 
         def update_working_directory(
-            current_path: Union[None, Path], new_path: str
+            current_path: Union[Path, None], new_path: str
         ) -> Path:
             if not current_path:
                 return Path(new_path)

@@ -76,82 +76,82 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry config virtualenvs.create false
+          poetry env use "$(which python)"
           poetry install
 
       - name: Run smoke tests using simple makim file
-        run: makim smoke-tests.simple
+        run: poetry run makim smoke-tests.simple
 
       - name: Run smoke tests using complex makim file
-        run: makim smoke-tests.complex
+        run: poetry run makim smoke-tests.complex
 
       - name: Run smoke tests using makim and containers-sugar
         if: ${{ matrix.os == 'ubuntu' }}
-        run: makim smoke-tests.containers
+        run: poetry run makim smoke-tests.containers
 
       - name: Run smoke tests using different interpreters
-        run: makim smoke-tests.shell-app
+        run: poetry run makim smoke-tests.shell-app
 
       - name: Run smoke tests using unittest makim file
-        run: makim smoke-tests.unittest
+        run: poetry run makim smoke-tests.unittest
 
       - name: Run smoke test using bash
-        run: makim smoke-tests.bash
+        run: poetry run makim smoke-tests.bash
 
       - name: Run smoke test for variable envs
-        run: makim smoke-tests.vars-env
+        run: poetry run makim smoke-tests.vars-env
 
       - name: Run smoke test for variables
-        run: makim smoke-tests.test-vars
+        run: poetry run makim smoke-tests.test-vars
 
       - name: Run smoke test for dir-absolute-path
-        run: makim smoke-tests.dir-absolute-path
+        run: poetry run makim smoke-tests.dir-absolute-path
 
       - name: Run smoke test for dir-no-path
-        run: makim smoke-tests.dir-no-path
+        run: poetry run makim smoke-tests.dir-no-path
 
       - name: Run smoke test for dir-relative-path
-        run: makim smoke-tests.dir-relative-path
+        run: poetry run makim smoke-tests.dir-relative-path
 
       - name: Run unit tests
-        run: makim tests.unittest
+        run: poetry run makim tests.unittest
 
       - name: Run smoke test for interactive args
-        run: makim smoke-tests.interactive-args
+        run: poetry run makim smoke-tests.interactive-args
 
       - name: Run smoke test for hooks (pre and post)
-        run: makim smoke-tests.run-hooks
+        run: poetry run makim smoke-tests.run-hooks
 
       - name: Run smoke test for matrix combinations
-        run: makim smoke-tests.matrix
+        run: poetry run makim smoke-tests.matrix
 
       - name: Run smoke test for shell app
-        run: makim smoke-tests.shell-app
+        run: poetry run makim smoke-tests.shell-app
 
       - name: Run smoke test for ssh remote execution
         if: ${{ matrix.os == 'linux' }}
-        run: makim smoke-tests.ssh-remote-execution
+        run: poetry run makim smoke-tests.ssh-remote-execution
 
       - name: Run smoke test for scheduler
-        run: makim smoke-tests.scheduler
+        run: poetry run makim smoke-tests.scheduler
 
       - name: Run smoke test for task logger
-        run: makim smoke-tests.task-logger
+        run: poetry run makim smoke-tests.task-logger
 
       - name: Run smoke test for task retry
-        run: makim smoke-tests.retry
+        run: poetry run makim smoke-tests.retry
 
       - name: Run smoke test for validating task conditionals
-        run: makim smoke-tests.validate-conditionals
+        run: poetry run makim smoke-tests.validate-conditionals
 
       - name: Run smoke test for testing failure hook
-        run: makim smoke-tests.failure-hook
+        run: poetry run makim smoke-tests.failure-hook
 
       - name: Run smoke test for testing args validation
-        run: makim smoke-tests.arg-validation
+        run: poetry run makim smoke-tests.arg-validation
 
       - name: Run smoke test for testing ignore errors option
-        run: makim smoke-tests.ignore-error-option
+        run: poetry run makim smoke-tests.ignore-error-option
 
       - name: Semantic Release PR Title Check
         uses: osl-incubator/semantic-release-pr-title-check@v1.4.1
@@ -190,14 +190,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry config virtualenvs.create false
+          poetry env use "$(which python)"
           poetry install
 
       - name: Run style checks
         if: success() || failure()
         run: |
-          pre-commit install
-          makim tests.linter
+          poetry run pre-commit install
+          poetry run makim tests.linter
 
       - name: Setup tmate session
         if: "${{ failure() && (contains(github.event.pull_request.labels.*.name, 'ci:enable-debugging')) }}"
