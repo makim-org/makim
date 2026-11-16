@@ -106,6 +106,21 @@ def _get_command_from_cli() -> str:
 
 def run_app() -> None:
     """Run the Typer app."""
+    cli_args = sys.argv[1:]
+    idx = 0
+
+    while idx < len(cli_args):
+        arg = cli_args[idx]
+
+        if arg in ('--version', '-v'):
+            app()
+            return
+
+        if arg not in CLI_ROOT_FLAGS_VALUES_COUNT:
+            break
+
+        idx += 1 + CLI_ROOT_FLAGS_VALUES_COUNT[arg]
+
     root_config = extract_root_config()
     config_file_path = cast(str, root_config.get('file', '.makim.yaml'))
 
