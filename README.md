@@ -12,7 +12,6 @@ improving task definition and dependency management. Instead of using the
 
 - License: BSD 3 Clause
 - Documentation: [Makim Docs](https://makim-org.github.io/makim)
-- Maintained by: [SciStitch](https://scistitch.com) and project contributors
 
 ---
 
@@ -136,3 +135,21 @@ To try makim, simply click the following link, make a copy of the notebook to
 your drive, and then you can modify and execute the code as needed:
 
 [Experiment with makim on Google Colab](https://colab.research.google.com/drive/1m131pqi6Bjq8Hp8YN_Cbuyezn61f19lB?usp=sharing)
+
+## Support & Acknowledgments
+
+### Help keep useful automation accessible
+
+Makim makes everyday development tasks easier to define, share, and run. The value of a good automation tool is that it keeps working as projects, environments, and dependencies evolve. Financial support helps create time for maintaining existing features, improving reliability, testing supported workflows, and making the documentation clearer for newcomers.
+
+**[Support Makim development on Open Collective](https://opencollective.com/osl/projects/makim/donate?interval=month&amount=20&name=&legalName=&email=)**. One-time and recurring contributions are welcome; even modest support helps sustain the work.
+
+### The people and organizations behind the work
+
+Makim is developed and maintained through [SciStitch](https://scistitch.com/), together with its open-source contributors. We thank [Open Science Labs (OSL)](https://opensciencelabs.org/) for its institutional support, and everyone who writes code, reports issues, reviews changes, shares ideas, or uses Makim in their projects. Your participation helps make the tool better for others.
+
+<p>
+  <a href="https://scistitch.com/"><img src="https://scistitch.com/images/logo/wordmark-color.svg" alt="SciStitch" width="160"></a>
+  &nbsp;&nbsp;
+  <a href="https://opensciencelabs.org/"><img src="https://scistitch.com/assets/osl-logo.svg" alt="Open Science Labs" width="128"></a>
+</p>
