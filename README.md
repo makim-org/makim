@@ -12,6 +12,7 @@ improving task definition and dependency management. Instead of using the
 
 - License: BSD 3 Clause
 - Documentation: [Makim Docs](https://makim-org.github.io/makim)
+- Maintained by: [SciStitch](https://scistitch.com) and project contributors
 
 ---
 
