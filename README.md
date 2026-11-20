@@ -149,7 +149,7 @@ Makim makes everyday development tasks easier to define, share, and run. The val
 Makim is developed and maintained through [SciStitch](https://scistitch.com/), together with its open-source contributors. We thank [Open Science Labs (OSL)](https://opensciencelabs.org/) for its institutional support, and everyone who writes code, reports issues, reviews changes, shares ideas, or uses Makim in their projects. Your participation helps make the tool better for others.
 
 <p>
-  <a href="https://scistitch.com/"><img src="https://scistitch.com/images/logo/wordmark-color.svg" alt="SciStitch" width="160"></a>
+  <a href="https://scistitch.com/"><img src="https://scistitch.com/images/logo/wordmark-color.svg" alt="SciStitch" width="160" style="background: #fff; border-radius: 6px; padding: 6px 8px;"></a>
   &nbsp;&nbsp;
-  <a href="https://opensciencelabs.org/"><img src="https://scistitch.com/assets/osl-logo.svg" alt="Open Science Labs" width="128"></a>
+  <a href="https://opensciencelabs.org/"><img src="https://scistitch.com/assets/osl-logo.svg" alt="Open Science Labs" width="128" style="background: #fff; border-radius: 6px; padding: 6px 8px;"></a>
 </p>
